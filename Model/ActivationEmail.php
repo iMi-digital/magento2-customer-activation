@@ -5,6 +5,8 @@
  */
 namespace IMI\Magento2CustomerActivation\Model;
 
+use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\Exception\MailException;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\App\Area;
 use Magento\Store\Model\Store;
@@ -15,25 +17,26 @@ use Magento\Store\Model\ScopeInterface;
 class ActivationEmail
 {
     /**
-     * @var \Magento\Framework\Mail\Template\TransportBuilder
+     * @var TransportBuilder
      */
     protected $transportBuilder;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     protected $storeManagerInterface;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var ScopeConfigInterface
      */
     protected $scopeConfigInterface;
 
     /**
      * ActivationEmail constructor.
-     * @param \Magento\Framework\Mail\Template\TransportBuilder $transportBuilder
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManagerInterface
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface
+     *
+     * @param TransportBuilder $transportBuilder
+     * @param StoreManagerInterface $storeManagerInterface
+     * @param ScopeConfigInterface $scopeConfigInterface
      */
     public function __construct(
         TransportBuilder $transportBuilder,
@@ -48,8 +51,8 @@ class ActivationEmail
     /**
      * If an account is activated, send an email to the user to notice it
      *
-     * @param \Magento\Customer\Api\Data\CustomerInterface $customer
-     * @throws \Magento\Framework\Exception\MailException
+     * @param CustomerInterface $customer
+     * @throws MailException
      */
     public function send($customer)
     {
@@ -70,7 +73,12 @@ class ActivationEmail
                     'store' => $customer->getStoreId(),
                 ]
             )
-            ->setTemplateVars(['email' => $customer->getEmail()]);
+            ->setTemplateVars([
+                'email' => $customer->getEmail(),
+                'prefix' => $customer->getPrefix(),
+                'firstname' => $customer->getFirstname(),
+                'lastname' => $customer->getLastname(),
+            ]);
 
         $this->transportBuilder->addTo($customer->getEmail());
         $this->transportBuilder->setFrom(

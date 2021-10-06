@@ -1,2 +1,12 @@
 <!--@subject A new customer registered  @-->
-A new customer registered : {{var email|raw}} ! The account is waiting for approval.
+{{template config_path="design/email/header_template"}}
+
+<p>A new customer registered:</p>
+
+<p>{{var email|raw}}</p>
+
+<p>The account is waiting for approval.</p>
+
+<p>To activate it, <a href="{{var customer_admin_url|raw}}">click here</a>.</p>
+
+{{template config_path="design/email/footer_template"}}
