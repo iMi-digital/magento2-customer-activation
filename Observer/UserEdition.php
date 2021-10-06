@@ -91,7 +91,6 @@ class UserEdition implements ObserverInterface
         ) {
             $this->manageUserActivationEmail($customer);
         }
-        $this->manageUserActivationEmail($customer);
     }
 
     /**

@@ -110,7 +110,7 @@ class Confirm
 
                     /** @var Redirect $resultRedirect */
                     $resultRedirect = $this->resultRedirectFactory->create();
-                    $resultRedirect->setPath('*/*/logoutSuccess');
+                    $resultRedirect->setPath('customer/account/login');
                     $result = $resultRedirect;
 
                     $this->adminNotification->send($customer);

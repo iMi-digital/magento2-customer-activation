@@ -99,11 +99,11 @@ class Connect
                     $this->customerSession->logout()->setBeforeAuthUrl($this->redirect->getRefererUrl())
                         ->setLastCustomerId($lastCustomerId);
 
-                    $this->messageManager->addNoticeMessage(__('Your account has not been enabled yet'));
+                    $this->messageManager->addNoticeMessage(__('Your account has not been enabled yet.'));
 
                     /** @var Redirect $resultRedirect */
                     $resultRedirect = $this->resultRedirectFactory->create();
-                    $resultRedirect->setPath('*/*/logoutSuccess');
+                    $resultRedirect->setPath('customer/account/login');
                     $result = $resultRedirect;
                 }
             } catch (NoSuchEntityException $ex) {
