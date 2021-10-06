@@ -23,7 +23,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 
-class Connect
+class Login
 {
     /**
      * @var RedirectFactory

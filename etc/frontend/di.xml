@@ -9,7 +9,7 @@
         <plugin name="IMI_CreatePost" type="IMI\Magento2CustomerActivation\Plugin\Create" sortOrder="1"  />
     </type>
     <type name="Magento\Customer\Controller\Account\LoginPost">
-        <plugin name="IMI_LoginPost" type="IMI\Magento2CustomerActivation\Plugin\Connect" sortOrder="1"  />
+        <plugin name="IMI_LoginPost" type="IMI\Magento2CustomerActivation\Plugin\Login" sortOrder="1"  />
     </type>
     <type name="Magento\Customer\Controller\Account\Confirm">
         <plugin name="IMI_Confirm" type="IMI\Magento2CustomerActivation\Plugin\Confirm" sortOrder="1"  />
