@@ -85,7 +85,9 @@ class UserEdition implements ObserverInterface
             $this->messageManager->addErrorMessage(__('Could not update user, email has not been sent'));
             $blnStatus = false;
         } catch (MailException $e) {
-            $this->messageManager->addErrorMessage(__('Could not send the email. Please try to desactivate then reactive the user again'));
+            $this->messageManager->addErrorMessage(
+                __('Could not send the email. Please try to desactivate then reactive the user again')
+            );
             $blnStatus = false;
         }
 
