@@ -1,6 +1,6 @@
 <?php
 
-namespace Enrico69\Magento2CustomerActivation\Helper;
+namespace IMI\Magento2CustomerActivation\Helper;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;

@@ -4,9 +4,9 @@
  * Date: 01/08/2017
  * Time: 11:28
  */
-namespace Enrico69\Magento2CustomerActivation\Observer;
+namespace IMI\Magento2CustomerActivation\Observer;
 
-use Enrico69\Magento2CustomerActivation\Helper\Data;
+use IMI\Magento2CustomerActivation\Helper\Data;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Exception\InputException;
@@ -16,9 +16,9 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\State\InputMismatchException;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Message\ManagerInterface;
-use Enrico69\Magento2CustomerActivation\Setup\InstallData;
+use IMI\Magento2CustomerActivation\Setup\InstallData;
 use Psr\Log\LoggerInterface;
-use Enrico69\Magento2CustomerActivation\Model\AdminNotification;
+use IMI\Magento2CustomerActivation\Model\AdminNotification;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\AccountManagementInterface;
 

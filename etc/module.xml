@@ -5,9 +5,9 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Enrico69_Magento2CustomerActivation" setup_version="1.4.2">
+    <module name="IMI_Magento2CustomerActivation" setup_version="1.4.2">
         <sequence>
-            <module name="Customer"/>
+            <module name="Magento_Customer"/>
         </sequence>
     </module>
 </config>

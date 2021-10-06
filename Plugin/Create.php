@@ -8,9 +8,9 @@
  * Date: 01/08/2017
  * Time: 11:33
  */
-namespace Enrico69\Magento2CustomerActivation\Plugin;
+namespace IMI\Magento2CustomerActivation\Plugin;
 
-use Enrico69\Magento2CustomerActivation\Helper\Data;
+use IMI\Magento2CustomerActivation\Helper\Data;
 use Magento\Customer\Controller\Account\CreatePost;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;

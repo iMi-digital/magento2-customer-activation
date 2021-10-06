@@ -6,12 +6,12 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\Customer\Controller\Account\CreatePost">
-        <plugin name="Enrico69_CreatePost" type="Enrico69\Magento2CustomerActivation\Plugin\Create" sortOrder="1"  />
+        <plugin name="IMI_CreatePost" type="IMI\Magento2CustomerActivation\Plugin\Create" sortOrder="1"  />
     </type>
     <type name="Magento\Customer\Controller\Account\LoginPost">
-        <plugin name="Enrico69_LoginPost" type="Enrico69\Magento2CustomerActivation\Plugin\Connect" sortOrder="1"  />
+        <plugin name="IMI_LoginPost" type="IMI\Magento2CustomerActivation\Plugin\Connect" sortOrder="1"  />
     </type>
     <type name="Magento\Customer\Controller\Account\Confirm">
-        <plugin name="Enrico69_Confirm" type="Enrico69\Magento2CustomerActivation\Plugin\Confirm" sortOrder="1"  />
+        <plugin name="IMI_Confirm" type="IMI\Magento2CustomerActivation\Plugin\Confirm" sortOrder="1"  />
     </type>
 </config>

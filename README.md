@@ -1,30 +1,25 @@
 # Magento 2 Customer Account Validation
 
-## Description
-
 This module is designed to add the possibility for the site owner to manually validate customer accounts at registration.
+This is useful in cases of B2B or private shops.
 
-This is usefule in cases of B2B or private shops.
+## Fork
 
-* Magento 2.1.6 and before: not tested
-* Magento 2.1.7 EE OK
-* Magento 2.1.8 CE OK
-* Magento 2.2 CE OK
-* Magento 2.4 CE OK
+Because the original module is no longer maintained, this module is a hard fork of
+[enrico69/magento2-customer-activation](https://github.com/enrico69/magento2-customer-activation/).
+We aim to maintain it for php 7.4 compatibility and Magento 2.4+ and add functionality.
 
-## Status
+## Prerequesites
 
-Last version : 1.4.2 : compatibility for MG2.2.x + bug fixes
-
-Do not use: 1.4.1
+This module requires php 7.4 and at least Magento 2.4.
 
 ## Installation and Update
 
-You can manually download the archive and put its content in the _app/code/Enrico69/Magento2CustomerActivation_ directory 
+You can manually download the archive and put its content in the _app/code/IMI/Magento2CustomerActivation_ directory 
 or, the simplest (and recommended) way, install it via composer:
 
 ```
-composer require enrico69/magento2-customer-activation
+composer require imi/magento2-customer-activation
 ```
 
 Whatever method you choosed, activate the module and then run the following command:

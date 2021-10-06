@@ -5,7 +5,7 @@
  * Time: 11:34
  */
 
-namespace Enrico69\Magento2CustomerActivation\Setup;
+namespace IMI\Magento2CustomerActivation\Setup;
 
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Customer\Model\Customer;

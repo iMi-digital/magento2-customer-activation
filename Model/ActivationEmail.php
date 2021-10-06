@@ -3,7 +3,7 @@
  * @author Eric COURTIAL <e.courtial30@gmail.com>
  * Date: 01/08/2017
  */
-namespace Enrico69\Magento2CustomerActivation\Model;
+namespace IMI\Magento2CustomerActivation\Model;
 
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\App\Area;
@@ -60,7 +60,7 @@ class ActivationEmail
         );
 
         if (!$emailTemplate) {
-            $emailTemplate = 'enrico69_activation_email';
+            $emailTemplate = 'imi_activation_email';
         }
 
         $this->transportBuilder->setTemplateIdentifier($emailTemplate)

@@ -5,7 +5,7 @@
  * @author Eric COURTIAL <e.courtial30@gmail.com>
  * Date: 05/12/2017
  */
-namespace Enrico69\Magento2CustomerActivation\Ui\Component\Listing\Column;
+namespace IMI\Magento2CustomerActivation\Ui\Component\Listing\Column;
 
 use Magento\Ui\Component\Listing\Columns\Column;
 

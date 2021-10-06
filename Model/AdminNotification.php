@@ -3,7 +3,7 @@
  * @author Eric COURTIAL <e.courtial30@gmail.com>
  * Date: 01/08/2017
  */
-namespace Enrico69\Magento2CustomerActivation\Model;
+namespace IMI\Magento2CustomerActivation\Model;
 
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\App\Area;
@@ -60,7 +60,7 @@ class AdminNotification
             $customer->getStoreId()
         );
 
-        $this->transportBuilder->setTemplateIdentifier('enrico69_activation_email_notification')
+        $this->transportBuilder->setTemplateIdentifier('imi_activation_email_notification')
             ->setTemplateOptions(
                 [
                     'area' => Area::AREA_FRONTEND,
@@ -76,7 +76,7 @@ class AdminNotification
                 'email' => $siteOwnerEmail
             ]
         );
-        
+
         $this->transportBuilder->getTransport()->sendMessage();
     }
 }

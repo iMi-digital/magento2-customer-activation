@@ -3,7 +3,7 @@
  * @author Eric COURTIAL <e.courtial30@gmail.com>
  * Date: 17/08/2017
  */
-namespace Enrico69\Magento2CustomerActivation\Setup;
+namespace IMI\Magento2CustomerActivation\Setup;
 
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -11,7 +11,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Eav\Model\Entity\Attribute\SetFactory as AttributeSetFactory;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Customer\Model\Customer;
-use Enrico69\Magento2CustomerActivation\Setup\InstallData;
+use IMI\Magento2CustomerActivation\Setup\InstallData;
 
 class UpgradeData implements UpgradeDataInterface
 {

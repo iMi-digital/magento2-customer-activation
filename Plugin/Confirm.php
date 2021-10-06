@@ -5,9 +5,9 @@
  *
  * Plugin to handle email address confirmation (if required)
  */
-namespace Enrico69\Magento2CustomerActivation\Plugin;
+namespace IMI\Magento2CustomerActivation\Plugin;
 
-use Enrico69\Magento2CustomerActivation\Helper\Data;
+use IMI\Magento2CustomerActivation\Helper\Data;
 use Magento\Customer\Controller\Account\Confirm as TargetClass;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
@@ -20,8 +20,8 @@ use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Enrico69\Magento2CustomerActivation\Model\AdminNotification;
-use Enrico69\Magento2CustomerActivation\Model\Attribute\Active;
+use IMI\Magento2CustomerActivation\Model\AdminNotification;
+use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 
 class Confirm
 {

@@ -3,7 +3,7 @@
  * @author Eric COURTIAL <e.courtial30@gmail.com>
  * Date: 02/11/2017
  */
-namespace Enrico69\Magento2CustomerActivation\Model;
+namespace IMI\Magento2CustomerActivation\Model;
 
 use Magento\Framework\Option\ArrayInterface;
 use Magento\Email\Model\ResourceModel\Template\CollectionFactory;
@@ -41,7 +41,7 @@ class EmailTemplateList implements ArrayInterface
     {
         $templates = $this->getTemplatesList();
         $arrayOfTemplates = [];
-        $arrayOfTemplates[] = ['value' => 'enrico69_activation_email', 'label' => 'Default Email'];
+        $arrayOfTemplates[] = ['value' => 'imi_activation_email', 'label' => 'Default Email'];
 
         foreach ($templates as $template) {
             /** @var \Magento\Email\Model\Template $template */
@@ -60,7 +60,7 @@ class EmailTemplateList implements ArrayInterface
     {
         $templates = $this->getTemplatesList();
         $arrayOfTemplates = [];
-        $arrayOfTemplates['enrico69_activation_email'] = 'Default Email';
+        $arrayOfTemplates['imi_activation_email'] = 'Default Email';
 
         foreach ($templates as $template) {
             /** @var \Magento\Email\Model\Template $template */

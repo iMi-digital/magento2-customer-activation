@@ -4,23 +4,23 @@
  * Date: 01/08/2017
  * Time: 11:29
  */
-namespace Enrico69\Magento2CustomerActivation\Observer;
+namespace IMI\Magento2CustomerActivation\Observer;
 
-use Enrico69\Magento2CustomerActivation\Helper\Data;
+use IMI\Magento2CustomerActivation\Helper\Data;
 use Exception;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer as EventObserver;
-use Enrico69\Magento2CustomerActivation\Setup\InstallData;
+use IMI\Magento2CustomerActivation\Setup\InstallData;
 use Psr\Log\LoggerInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Message\ManagerInterface;
-use Enrico69\Magento2CustomerActivation\Model\ActivationEmail;
+use IMI\Magento2CustomerActivation\Model\ActivationEmail;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\MailException;
-use Enrico69\Magento2CustomerActivation\Model\Attribute\Active;
+use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 
 class UserEdition implements ObserverInterface
 {
