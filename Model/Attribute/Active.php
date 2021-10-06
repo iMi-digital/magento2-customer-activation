@@ -5,7 +5,6 @@
  */
 namespace IMI\Magento2CustomerActivation\Model\Attribute;
 
-use IMI\Magento2CustomerActivation\Setup\InstallData;
 use Magento\Customer\Api\Data\CustomerInterface;
 
 class Active

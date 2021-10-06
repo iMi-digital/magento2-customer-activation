@@ -17,7 +17,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\State\InputMismatchException;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Message\ManagerInterface;
-use IMI\Magento2CustomerActivation\Setup\InstallData;
 use Psr\Log\LoggerInterface;
 use IMI\Magento2CustomerActivation\Model\AdminNotification;
 use Magento\Customer\Model\Session;
@@ -25,37 +24,18 @@ use Magento\Customer\Api\AccountManagementInterface;
 
 class UserActivation implements ObserverInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var CustomerRepositoryInterface
-     */
-    protected $customerRepository;
+    protected CustomerRepositoryInterface $customerRepository;
 
-    /**
-     * @var ManagerInterface
-     */
-    protected $messageManager;
+    protected ManagerInterface $messageManager;
 
-    /**
-     * @var AdminNotification
-     */
-    protected $adminNotification;
+    protected AdminNotification $adminNotification;
 
-    /**
-     * @var Session
-     */
-    protected $customerSession;
+    protected Session $customerSession;
 
-    /**
-     * @var AccountManagementInterface
-     */
-    protected $accountManagement;
+    protected AccountManagementInterface $accountManagement;
 
-    /** @var Data */
     protected Data $helper;
 
     public function __construct(
@@ -91,7 +71,7 @@ class UserActivation implements ObserverInterface
             $newCustomer = $this->customerRepository->get($customer->getEmail());
             $newCustomer->setCustomAttribute(Active::CUSTOMER_ACCOUNT_ACTIVE, 0);
             $this->customerRepository->save($newCustomer);
-            $this->messageManager->addNoticeMessage(__('Your account will be enabled by the site owner soon'));
+            $this->messageManager->addNoticeMessage(__('We will enable your account soon.'));
             $this->customerSession->setRegisterSuccess(true);
 
             $confirmationStatus = $this->accountManagement->getConfirmationStatus($newCustomer->getId());

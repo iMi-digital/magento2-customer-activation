@@ -16,7 +16,6 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Psr\Log\LoggerInterface;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Message\ManagerInterface;
@@ -25,47 +24,23 @@ use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 
 class Login
 {
-    /**
-     * @var RedirectFactory
-     */
-    protected $resultRedirectFactory;
+    protected RedirectFactory $resultRedirectFactory;
 
-    /**
-     * @var RedirectInterface
-     */
-    protected $redirect;
+    protected RedirectInterface $redirect;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected Session $customerSession;
 
-    /**
-     * @var Session
-     */
-    protected $customerSession;
+    protected CustomerRepositoryInterface $customerRepository;
 
-    /**
-     * @var CustomerRepositoryInterface
-     */
-    protected $customerRepository;
+    protected ManagerInterface $messageManager;
 
-    /**
-     * @var ManagerInterface
-     */
-    protected $messageManager;
-
-    /**
-     * @var Active
-     */
-    protected $activeAttribute;
+    protected Active $activeAttribute;
 
     protected Data $helper;
 
     public function __construct(
         RedirectFactory $redirectFactory,
         RedirectInterface $redirectInterface,
-        LoggerInterface $logger,
         Session $customerSession,
         CustomerRepositoryInterface $customerRepository,
         ManagerInterface $messageManager,
@@ -74,7 +49,6 @@ class Login
     ) {
         $this->resultRedirectFactory = $redirectFactory;
         $this->redirect = $redirectInterface;
-        $this->logger = $logger;
         $this->customerSession = $customerSession;
         $this->customerRepository = $customerRepository;
         $this->messageManager = $messageManager;
@@ -96,7 +70,9 @@ class Login
 
                 if (!$this->activeAttribute->isCustomerActive($customer)) {
                     $lastCustomerId = $this->customerSession->getCustomerId();
-                    $this->customerSession->logout()->setBeforeAuthUrl($this->redirect->getRefererUrl())
+                    $this->customerSession
+                        ->logout()
+                        ->setBeforeAuthUrl($this->redirect->getRefererUrl())
                         ->setLastCustomerId($lastCustomerId);
 
                     $this->messageManager->addNoticeMessage(__('Your account has not been enabled yet.'));

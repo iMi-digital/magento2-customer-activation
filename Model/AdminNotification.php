@@ -7,30 +7,22 @@ namespace IMI\Magento2CustomerActivation\Model;
 
 use Magento\Backend\Helper\Data;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\MailException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\App\Area;
-use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
 class AdminNotification
 {
-    /**
-     * @var TransportBuilder
-     */
-    protected $transportBuilder;
+    protected TransportBuilder $transportBuilder;
 
-    /**
-     * @var StoreManagerInterface
-     */
-    protected $storeManagerInterface;
+    protected StoreManagerInterface $storeManager;
 
-    /**
-     * @var ScopeConfigInterface
-     */
-    protected $scopeConfigInterface;
+    protected ScopeConfigInterface $scopeConfig;
 
     protected Data $backendHelper;
 
@@ -41,8 +33,8 @@ class AdminNotification
         Data $backendHelper
     ) {
         $this->transportBuilder = $transportBuilder;
-        $this->storeManagerInterface = $storeManagerInterface;
-        $this->scopeConfigInterface = $scopeConfigInterface;
+        $this->storeManager = $storeManagerInterface;
+        $this->scopeConfig = $scopeConfigInterface;
         $this->backendHelper = $backendHelper;
     }
 
@@ -53,10 +45,12 @@ class AdminNotification
      * @param CustomerInterface $customer
      *
      * @throws MailException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function send($customer)
     {
-        $siteOwnerEmail = $this->scopeConfigInterface->getValue(
+        $siteOwnerEmail = $this->scopeConfig->getValue(
             'trans_email/ident_sales/email',
             ScopeInterface::SCOPE_STORE,
             $customer->getStoreId()
@@ -77,7 +71,7 @@ class AdminNotification
         $this->transportBuilder->addTo($siteOwnerEmail);
         $this->transportBuilder->setFrom(
             [
-                'name' => $this->storeManagerInterface->getStore($customer->getStoreId())->getName(),
+                'name' => $this->storeManager->getStore($customer->getStoreId())->getName(),
                 'email' => $siteOwnerEmail,
             ]
         );

@@ -5,27 +5,23 @@
  */
 namespace IMI\Magento2CustomerActivation\Model;
 
+use Magento\Email\Model\ResourceModel\Template\Collection;
+use Magento\Email\Model\Template;
 use Magento\Framework\Option\ArrayInterface;
 use Magento\Email\Model\ResourceModel\Template\CollectionFactory;
 
 class EmailTemplateList implements ArrayInterface
 {
-    /**
-     * @var \Magento\Email\Model\ResourceModel\Template\CollectionFactory
-     */
-    protected $collectionFactory;
+    protected CollectionFactory $collectionFactory;
 
-    /**
-     * EmailTemplateList constructor.
-     * @param \Magento\Email\Model\ResourceModel\Template\CollectionFactory $collectionFactory
-     */
-    public function __construct(CollectionFactory $collectionFactory)
-    {
+    public function __construct(
+        CollectionFactory $collectionFactory
+    ) {
         $this->collectionFactory = $collectionFactory;
     }
 
     /**
-     * @return \Magento\Email\Model\ResourceModel\Template\Collection
+     * @return Collection
      */
     protected function getTemplatesList()
     {
@@ -44,7 +40,7 @@ class EmailTemplateList implements ArrayInterface
         $arrayOfTemplates[] = ['value' => 'imi_activation_email', 'label' => 'Default Email'];
 
         foreach ($templates as $template) {
-            /** @var \Magento\Email\Model\Template $template */
+            /** @var Template $template */
             $arrayOfTemplates[] = ['value' => $template->getId(), 'label' => $template->getTemplateCode()];
         }
 
@@ -63,7 +59,7 @@ class EmailTemplateList implements ArrayInterface
         $arrayOfTemplates['imi_activation_email'] = 'Default Email';
 
         foreach ($templates as $template) {
-            /** @var \Magento\Email\Model\Template $template */
+            /** @var Template $template */
             $arrayOfTemplates[$template->getId()] = $template->getTemplateCode();
         }
 

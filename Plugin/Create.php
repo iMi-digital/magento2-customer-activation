@@ -15,43 +15,26 @@ use Magento\Customer\Controller\Account\CreatePost;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\App\Response\RedirectInterface;
-use Psr\Log\LoggerInterface;
 use Magento\Customer\Model\Session;
 
 class Create
 {
-    /**
-     * @var RedirectFactory
-     */
-    protected $resultRedirectFactory;
+    protected RedirectFactory $resultRedirectFactory;
 
-    /**
-     * @var RedirectInterface
-     */
-    protected $redirect;
+    protected RedirectInterface $redirect;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var Session
-     */
-    protected $customerSession;
+    protected Session $customerSession;
 
     protected Data $helper;
 
     public function __construct(
         RedirectFactory $redirectFactory,
         RedirectInterface $redirectInterface,
-        LoggerInterface $logger,
         Session $customerSession,
         Data $helper
     ) {
         $this->resultRedirectFactory = $redirectFactory;
         $this->redirect = $redirectInterface;
-        $this->logger = $logger;
         $this->customerSession = $customerSession;
         $this->helper = $helper;
     }
@@ -65,7 +48,9 @@ class Create
     {
         if ($this->helper->isEnabled() && $this->customerSession->getRegisterSuccess()) {
             $lastCustomerId = $this->customerSession->getCustomerId();
-            $this->customerSession->logout()->setBeforeAuthUrl($this->redirect->getRefererUrl())
+            $this->customerSession
+                ->logout()
+                ->setBeforeAuthUrl($this->redirect->getRefererUrl())
                 ->setLastCustomerId($lastCustomerId);
 
             /** @var Redirect $resultRedirect */

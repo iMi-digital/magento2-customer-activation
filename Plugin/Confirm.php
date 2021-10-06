@@ -12,78 +12,43 @@ use Magento\Customer\Controller\Account\Confirm as TargetClass;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\App\Response\RedirectInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\MailException;
-use Psr\Log\LoggerInterface;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use IMI\Magento2CustomerActivation\Model\AdminNotification;
 use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 
 class Confirm
 {
-    /**
-     * @var RedirectFactory
-     */
-    protected $resultRedirectFactory;
+    protected RedirectFactory $resultRedirectFactory;
 
-    /**
-     * @var RedirectInterface
-     */
-    protected $redirect;
+    protected RedirectInterface $redirect;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected Session $customerSession;
 
-    /**
-     * @var Session
-     */
-    protected $customerSession;
+    protected CustomerRepositoryInterface $customerRepository;
 
-    /**
-     * @var CustomerRepositoryInterface
-     */
-    protected $customerRepository;
+    protected AdminNotification $adminNotification;
 
-    /**
-     * @var ManagerInterface
-     */
-    protected $messageManager;
-
-    /**
-     * @var AdminNotification
-     */
-    protected $adminNotification;
-
-    /**
-     * @var Active
-     */
-    protected $activeAttribute;
+    protected Active $activeAttribute;
 
     protected Data $helper;
 
     public function __construct(
         RedirectFactory $redirectFactory,
         RedirectInterface $redirectInterface,
-        LoggerInterface $logger,
         Session $customerSession,
         CustomerRepositoryInterface $customerRepository,
-        ManagerInterface $messageManager,
         AdminNotification $adminNotification,
         Active $activeAttribute,
         Data $helper
     ) {
         $this->resultRedirectFactory = $redirectFactory;
         $this->redirect = $redirectInterface;
-        $this->logger = $logger;
         $this->customerSession = $customerSession;
         $this->customerRepository = $customerRepository;
-        $this->messageManager = $messageManager;
         $this->adminNotification = $adminNotification;
         $this->activeAttribute = $activeAttribute;
         $this->helper = $helper;
@@ -98,14 +63,15 @@ class Confirm
      */
     public function afterExecute(TargetClass $subject, $result)
     {
-        if ($this->helper->isEnabled() && $this->customerSession->isLoggedIn()
-        ) {
+        if ($this->helper->isEnabled() && $this->customerSession->isLoggedIn()) {
             try {
                 $customer = $this->customerRepository->getById($this->customerSession->getCustomerId());
 
                 if (!$this->activeAttribute->isCustomerActive($customer)) {
                     $lastCustomerId = $this->customerSession->getCustomerId();
-                    $this->customerSession->logout()->setBeforeAuthUrl($this->redirect->getRefererUrl())
+                    $this->customerSession
+                        ->logout()
+                        ->setBeforeAuthUrl($this->redirect->getRefererUrl())
                         ->setLastCustomerId($lastCustomerId);
 
                     /** @var Redirect $resultRedirect */
