@@ -6,10 +6,14 @@
  */
 namespace Enrico69\Magento2CustomerActivation\Observer;
 
+use Enrico69\Magento2CustomerActivation\Helper\Data;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\MailException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\State\InputMismatchException;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Enrico69\Magento2CustomerActivation\Setup\InstallData;
@@ -26,27 +30,22 @@ class UserActivation implements ObserverInterface
     protected $logger;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     * @var CustomerRepositoryInterface
      */
     protected $customerRepository;
 
     /**
-     * @var \Magento\Framework\Message\ManagerInterface
+     * @var ManagerInterface
      */
     protected $messageManager;
 
     /**
-     * @var \Enrico69\Magento2CustomerActivation\Model\AdminNotification
+     * @var AdminNotification
      */
     protected $adminNotification;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var Session
      */
     protected $customerSession;
 
@@ -55,46 +54,39 @@ class UserActivation implements ObserverInterface
      */
     protected $accountManagement;
 
-    /**
-     * UserActivation constructor.
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
-     * @param \Magento\Framework\Message\ManagerInterface $messageManager
-     * @param \Psr\Log\LoggerInterface $logger
-     * @param \Enrico69\Magento2CustomerActivation\Model\AdminNotification $adminNotification
-     * @param \Magento\Customer\Model\Session $customerSession
-     * @param AccountManagementInterface $accountManagement
-     */
+    /** @var Data */
+    protected Data $helper;
+
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
         CustomerRepositoryInterface $customerRepository,
         ManagerInterface $messageManager,
         LoggerInterface $logger,
         AdminNotification $adminNotification,
         Session $customerSession,
-        AccountManagementInterface $accountManagement
+        AccountManagementInterface $accountManagement,
+        Data $helper
     ) {
-        $this->scopeConfig = $scopeConfig;
         $this->customerRepository = $customerRepository;
         $this->messageManager = $messageManager;
         $this->logger = $logger;
         $this->adminNotification = $adminNotification;
         $this->customerSession = $customerSession;
         $this->accountManagement = $accountManagement;
+        $this->helper = $helper;
     }
 
     /**
-     * @param \Magento\Framework\Event\Observer $observer
-     * @throws \Magento\Framework\Exception\InputException
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\State\InputMismatchException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Magento\Framework\Exception\MailException
+     * @param EventObserver $observer
+     * @throws InputException
+     * @throws LocalizedException
+     * @throws InputMismatchException
+     * @throws NoSuchEntityException
+     * @throws MailException
      */
     public function execute(EventObserver $observer)
     {
         $customer = $observer->getEvent()->getCustomer();
-        if ($this->scopeConfig->getValue('customer/create_account/customer_account_activation', ScopeInterface::SCOPE_STORE)) {
+        if ($this->helper->isEnabled()) {
             $newCustomer = $this->customerRepository->get($customer->getEmail());
             $newCustomer->setCustomAttribute(InstallData::CUSTOMER_ACCOUNT_ACTIVE, 0);
             $this->customerRepository->save($newCustomer);

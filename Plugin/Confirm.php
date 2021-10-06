@@ -7,11 +7,14 @@
  */
 namespace Enrico69\Magento2CustomerActivation\Plugin;
 
+use Enrico69\Magento2CustomerActivation\Helper\Data;
 use Magento\Customer\Controller\Account\Confirm as TargetClass;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\MailException;
 use Psr\Log\LoggerInterface;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
@@ -23,19 +26,14 @@ use Enrico69\Magento2CustomerActivation\Model\Attribute\Active;
 class Confirm
 {
     /**
-     * @var \Magento\Framework\Controller\Result\RedirectFactory
+     * @var RedirectFactory
      */
     protected $resultRedirectFactory;
 
     /**
-     * @var \Magento\Framework\App\Response\RedirectInterface
+     * @var RedirectInterface
      */
     protected $redirect;
-
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
 
     /**
      * @var LoggerInterface
@@ -43,22 +41,22 @@ class Confirm
     protected $logger;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var Session
      */
     protected $customerSession;
 
     /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     * @var CustomerRepositoryInterface
      */
     protected $customerRepository;
 
     /**
-     * @var \Magento\Framework\Message\ManagerInterface
+     * @var ManagerInterface
      */
     protected $messageManager;
 
     /**
-     * @var \Enrico69\Magento2CustomerActivation\Model\AdminNotification
+     * @var AdminNotification
      */
     protected $adminNotification;
 
@@ -67,51 +65,40 @@ class Confirm
      */
     protected $activeAttribute;
 
-    /**
-     * Confirm constructor.
-     * @param RedirectFactory $redirectFactory
-     * @param RedirectInterface $redirectInterface
-     * @param ScopeConfigInterface $scopeConfig
-     * @param LoggerInterface $logger
-     * @param Session $customerSession
-     * @param CustomerRepositoryInterface $customerRepository
-     * @param ManagerInterface $messageManager
-     * @param AdminNotification $adminNotification
-     * @param Active $activeAttribute
-     */
+    protected Data $helper;
+
     public function __construct(
         RedirectFactory $redirectFactory,
         RedirectInterface $redirectInterface,
-        ScopeConfigInterface $scopeConfig,
         LoggerInterface $logger,
         Session $customerSession,
         CustomerRepositoryInterface $customerRepository,
         ManagerInterface $messageManager,
         AdminNotification $adminNotification,
-        Active $activeAttribute
+        Active $activeAttribute,
+        Data $helper
     ) {
         $this->resultRedirectFactory = $redirectFactory;
         $this->redirect = $redirectInterface;
-        $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->customerSession = $customerSession;
         $this->customerRepository = $customerRepository;
         $this->messageManager = $messageManager;
         $this->adminNotification = $adminNotification;
         $this->activeAttribute = $activeAttribute;
+        $this->helper = $helper;
     }
 
     /**
      * @param TargetClass $subject
      * @param $result
-     * @return \Magento\Framework\Controller\Result\Redirect
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\MailException
+     * @return Redirect
+     * @throws LocalizedException
+     * @throws MailException
      */
     public function afterExecute(TargetClass $subject, $result)
     {
-        if ($this->scopeConfig->getValue('customer/create_account/customer_account_activation', ScopeInterface::SCOPE_STORE)
-            && $this->customerSession->isLoggedIn()
+        if ($this->helper->isEnabled() && $this->customerSession->isLoggedIn()
         ) {
             try {
                 $customer = $this->customerRepository->getById($this->customerSession->getCustomerId());
@@ -121,7 +108,7 @@ class Confirm
                     $this->customerSession->logout()->setBeforeAuthUrl($this->redirect->getRefererUrl())
                         ->setLastCustomerId($lastCustomerId);
 
-                    /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+                    /** @var Redirect $resultRedirect */
                     $resultRedirect = $this->resultRedirectFactory->create();
                     $resultRedirect->setPath('*/*/logoutSuccess');
                     $result = $resultRedirect;

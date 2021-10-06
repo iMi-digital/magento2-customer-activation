@@ -10,11 +10,12 @@
  */
 namespace Enrico69\Magento2CustomerActivation\Plugin;
 
+use Enrico69\Magento2CustomerActivation\Helper\Data;
 use Magento\Customer\Controller\Account\LoginPost;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\App\Response\RedirectInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
@@ -25,19 +26,14 @@ use Enrico69\Magento2CustomerActivation\Model\Attribute\Active;
 class Connect
 {
     /**
-     * @var \Magento\Framework\Controller\Result\RedirectFactory
+     * @var RedirectFactory
      */
     protected $resultRedirectFactory;
 
     /**
-     * @var \Magento\Framework\App\Response\RedirectInterface
+     * @var RedirectInterface
      */
     protected $redirect;
-
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
 
     /**
      * @var LoggerInterface
@@ -45,17 +41,17 @@ class Connect
     protected $logger;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var Session
      */
     protected $customerSession;
 
     /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     * @var CustomerRepositoryInterface
      */
     protected $customerRepository;
 
     /**
-     * @var \Magento\Framework\Message\ManagerInterface
+     * @var ManagerInterface
      */
     protected $messageManager;
 
@@ -64,46 +60,37 @@ class Connect
      */
     protected $activeAttribute;
 
-    /**
-     * Connect constructor.
-     * @param RedirectFactory $redirectFactory
-     * @param RedirectInterface $redirectInterface
-     * @param ScopeConfigInterface $scopeConfig
-     * @param LoggerInterface $logger
-     * @param Session $customerSession
-     * @param CustomerRepositoryInterface $customerRepository
-     * @param ManagerInterface $messageManager
-     * @param Active $activeAttribute
-     */
+    protected Data $helper;
+
     public function __construct(
         RedirectFactory $redirectFactory,
         RedirectInterface $redirectInterface,
-        ScopeConfigInterface $scopeConfig,
         LoggerInterface $logger,
         Session $customerSession,
         CustomerRepositoryInterface $customerRepository,
         ManagerInterface $messageManager,
-        Active $activeAttribute
+        Active $activeAttribute,
+        Data $helper
     ) {
         $this->resultRedirectFactory = $redirectFactory;
         $this->redirect = $redirectInterface;
-        $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->customerSession = $customerSession;
         $this->customerRepository = $customerRepository;
         $this->messageManager = $messageManager;
         $this->activeAttribute = $activeAttribute;
+        $this->helper = $helper;
     }
 
     /**
-     * @param \Magento\Customer\Controller\Account\LoginPost $subject
+     * @param LoginPost $subject
      * @param $result
-     * @return \Magento\Framework\Controller\Result\Redirect
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return Redirect
+     * @throws LocalizedException
      */
     public function afterExecute(LoginPost $subject, $result)
     {
-        if ($this->scopeConfig->getValue('customer/create_account/customer_account_activation', ScopeInterface::SCOPE_STORE)) {
+        if ($this->helper->isEnabled()) {
             try {
                 $customer = $this->customerRepository->getById($this->customerSession->getCustomerId());
 
@@ -114,7 +101,7 @@ class Connect
 
                     $this->messageManager->addNoticeMessage(__('Your account has not been enabled yet'));
 
-                    /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+                    /** @var Redirect $resultRedirect */
                     $resultRedirect = $this->resultRedirectFactory->create();
                     $resultRedirect->setPath('*/*/logoutSuccess');
                     $result = $resultRedirect;

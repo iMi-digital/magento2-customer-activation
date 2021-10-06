@@ -10,30 +10,25 @@
  */
 namespace Enrico69\Magento2CustomerActivation\Plugin;
 
+use Enrico69\Magento2CustomerActivation\Helper\Data;
 use Magento\Customer\Controller\Account\CreatePost;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\App\Response\RedirectInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Customer\Model\Session;
 
 class Create
 {
     /**
-     * @var \Magento\Framework\Controller\Result\RedirectFactory
+     * @var RedirectFactory
      */
     protected $resultRedirectFactory;
 
     /**
-     * @var \Magento\Framework\App\Response\RedirectInterface
+     * @var RedirectInterface
      */
     protected $redirect;
-
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
 
     /**
      * @var LoggerInterface
@@ -41,47 +36,39 @@ class Create
     protected $logger;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var Session
      */
     protected $customerSession;
 
-    /**
-     * Connect constructor.
-     * @param \Magento\Framework\Controller\Result\RedirectFactory $redirectFactory
-     * @param \Magento\Framework\App\Response\RedirectInterface $redirectInterface
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Psr\Log\LoggerInterface $logger
-     * @param \Magento\Customer\Model\Session $customerSession
-     */
+    protected Data $helper;
+
     public function __construct(
         RedirectFactory $redirectFactory,
         RedirectInterface $redirectInterface,
-        ScopeConfigInterface $scopeConfig,
         LoggerInterface $logger,
-        Session $customerSession
+        Session $customerSession,
+        Data $helper
     ) {
         $this->resultRedirectFactory = $redirectFactory;
         $this->redirect = $redirectInterface;
-        $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->customerSession = $customerSession;
+        $this->helper = $helper;
     }
 
     /**
-     * @param \Magento\Customer\Controller\Account\CreatePost $subject
+     * @param CreatePost $subject
      * @param $result
-     * @return \Magento\Framework\Controller\Result\Redirect
+     * @return Redirect
      */
     public function afterExecute(CreatePost $subject, $result)
     {
-        if ($this->scopeConfig->getValue('customer/create_account/customer_account_activation', ScopeInterface::SCOPE_STORE)
-            && $this->customerSession->getRegisterSuccess()
-        ) {
+        if ($this->helper->isEnabled() && $this->customerSession->getRegisterSuccess()) {
             $lastCustomerId = $this->customerSession->getCustomerId();
             $this->customerSession->logout()->setBeforeAuthUrl($this->redirect->getRefererUrl())
                 ->setLastCustomerId($lastCustomerId);
 
-            /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+            /** @var Redirect $resultRedirect */
             $resultRedirect = $this->resultRedirectFactory->create();
             $resultRedirect->setPath('*/*/logoutSuccess');
             $result = $resultRedirect;

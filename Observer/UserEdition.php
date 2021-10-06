@@ -6,10 +6,12 @@
  */
 namespace Enrico69\Magento2CustomerActivation\Observer;
 
+use Enrico69\Magento2CustomerActivation\Helper\Data;
+use Exception;
+use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
 use Enrico69\Magento2CustomerActivation\Setup\InstallData;
 use Psr\Log\LoggerInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
@@ -28,27 +30,22 @@ class UserEdition implements ObserverInterface
     protected $logger;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     * @var CustomerRepositoryInterface
      */
     protected $customerRepository;
 
     /**
-     * @var \Magento\Framework\Message\ManagerInterface
+     * @var ManagerInterface
      */
     protected $messageManager;
 
     /**
-     * @var \Enrico69\Magento2CustomerActivation\Model\ActivationEmail
+     * @var ActivationEmail
      */
     protected $activationEmail;
 
     /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
+     * @var AdapterInterface
      */
     protected $connexion;
 
@@ -57,32 +54,25 @@ class UserEdition implements ObserverInterface
      */
     protected $activeAttribute;
 
-    /**
-     * UserEdition constructor.
-     * @param ScopeConfigInterface $scopeConfig
-     * @param LoggerInterface $logger
-     * @param CustomerRepositoryInterface $customerRepository
-     * @param ManagerInterface $messageManager
-     * @param ActivationEmail $activationEmail
-     * @param ResourceConnection $resourceConnection
-     * @param Active $activeAttribute
-     */
+    /** @var Data */
+    protected $helper;
+
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
         LoggerInterface $logger,
         CustomerRepositoryInterface $customerRepository,
         ManagerInterface $messageManager,
         ActivationEmail $activationEmail,
         ResourceConnection $resourceConnection,
-        Active $activeAttribute
+        Active $activeAttribute,
+        Data $helper
     ) {
-        $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->customerRepository = $customerRepository;
         $this->messageManager = $messageManager;
         $this->activationEmail = $activationEmail;
         $this->connexion = $resourceConnection->getConnection();
         $this->activeAttribute = $activeAttribute;
+        $this->helper = $helper;
     }
 
     /**
@@ -91,13 +81,11 @@ class UserEdition implements ObserverInterface
     public function execute(EventObserver $observer)
     {
         $customer = $observer->getEvent()->getCustomer();
-        /** @var \Magento\Customer\Api\Data\CustomerInterface $customer */
+        /** @var CustomerInterface $customer */
 
         // At customer account update (in adminhtml), if the account is active
         // but the email has not been sent: send it to the customer to notice it
-        if ($this->scopeConfig->getValue('customer/create_account/customer_account_activation',
-                ScopeInterface::SCOPE_STORE,
-                $customer->getStoreId())
+        if ($this->helper->isEnabled($customer->getStoreId())
             && $customer->getCustomAttribute(InstallData::CUSTOMER_ACTIVATION_EMAIL_SENT)->getValue() !== '1'
             && $this->activeAttribute->isCustomerActive($customer)
         ) {
@@ -106,7 +94,7 @@ class UserEdition implements ObserverInterface
     }
 
     /**
-     * @param \Magento\Customer\Api\Data\CustomerInterface $customer
+     * @param CustomerInterface $customer
      */
     protected function manageUserActivationEmail($customer)
     {
@@ -134,8 +122,8 @@ class UserEdition implements ObserverInterface
     }
 
     /**
-     * @param \Magento\Customer\Api\Data\CustomerInterface $customer
-     * @throws \Magento\Framework\Exception\CouldNotSaveException
+     * @param CustomerInterface $customer
+     * @throws CouldNotSaveException
      */
     protected function updateUser($customer)
     {
@@ -143,7 +131,7 @@ class UserEdition implements ObserverInterface
             $updatedCustomer = $this->customerRepository->getById($customer->getId());
             $updatedCustomer->setCustomAttribute(InstallData::CUSTOMER_ACTIVATION_EMAIL_SENT, true);
             $this->customerRepository->save($updatedCustomer);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $e = new CouldNotSaveException(__($ex->getMessage()), $ex);
             $this->logger->error(__FILE__ . ' : ' . $ex->getMessage());
             $this->logger->error(__FILE__ . ' : ' . $ex->getTraceAsString());
@@ -152,14 +140,14 @@ class UserEdition implements ObserverInterface
     }
 
     /**
-     * @param \Magento\Customer\Api\Data\CustomerInterface $customer
-     * @throws \Magento\Framework\Exception\MailException
+     * @param CustomerInterface $customer
+     * @throws MailException
      */
     protected function sendEmail($customer)
     {
         try {
             $this->activationEmail->send($customer);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $e = new MailException(__($ex->getMessage()), $ex);
             $this->logger->error(__FILE__ . ' : ' . $ex->getMessage());
             $this->logger->error(__FILE__ . ' : ' . $ex->getTraceAsString());
