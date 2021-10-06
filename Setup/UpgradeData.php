@@ -5,6 +5,7 @@
  */
 namespace IMI\Magento2CustomerActivation\Setup;
 
+use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -27,8 +28,8 @@ class UpgradeData implements UpgradeDataInterface
 
     /**
      * InstallData constructor.
-     * @param \Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory
-     * @param \Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory
+     * @param CustomerSetupFactory $customerSetupFactory
+     * @param AttributeSetFactory $attributeSetFactory
      */
     public function __construct(
         CustomerSetupFactory $customerSetupFactory,
@@ -39,8 +40,8 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     /**
-     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup
-     * @param \Magento\Framework\Setup\ModuleContextInterface $context
+     * @param ModuleDataSetupInterface $setup
+     * @param ModuleContextInterface $context
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -62,7 +63,7 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     /**
-     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup
+     * @param ModuleDataSetupInterface $setup
      */
     protected function upgradeToOneOneZero($setup)
     {
@@ -76,7 +77,7 @@ class UpgradeData implements UpgradeDataInterface
         $attributeSet = $this->attributeSetFactory->create();
         $attributeGroupId = $attributeSet->getDefaultGroupId($attributeSetId);
 
-        $newAttribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, InstallData::CUSTOMER_ACTIVATION_EMAIL_SENT);
+        $newAttribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, Active::CUSTOMER_ACTIVATION_EMAIL_SENT);
         $newAttribute->addData([
             'attribute_set_id' => $attributeSetId,
             'attribute_group_id' => $attributeGroupId,
@@ -87,26 +88,26 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     /**
-     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup
+     * @param ModuleDataSetupInterface $setup
      */
     protected function upgradeToOneTwoOne($setup)
     {
         /** @var CustomerSetup $customerSetup */
         $customerSetup = $this->customerSetupFactory->create(['setup' => $setup]);
-        $newAttribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, InstallData::CUSTOMER_ACCOUNT_ACTIVE);
+        $newAttribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, Active::CUSTOMER_ACCOUNT_ACTIVE);
         $newAttribute->setData('is_user_defined', 0);
 
         $newAttribute->save();
     }
 
     /**
-     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup
+     * @param ModuleDataSetupInterface $setup
      */
     protected function upgradeToOneFourZero($setup)
     {
         /** @var CustomerSetup $customerSetup */
         $customerSetup = $this->customerSetupFactory->create(['setup' => $setup]);
-        $newAttribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, InstallData::CUSTOMER_ACCOUNT_ACTIVE);
+        $newAttribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, Active::CUSTOMER_ACCOUNT_ACTIVE);
         $newAttribute->setData('is_used_in_grid', 1);
         $newAttribute->setData('is_visible_in_grid', 1);
         $newAttribute->setData('is_filterable_in_grid', 1);

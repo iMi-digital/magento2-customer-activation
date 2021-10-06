@@ -86,7 +86,7 @@ class UserEdition implements ObserverInterface
         // At customer account update (in adminhtml), if the account is active
         // but the email has not been sent: send it to the customer to notice it
         if ($this->helper->isEnabled($customer->getStoreId())
-            && $customer->getCustomAttribute(InstallData::CUSTOMER_ACTIVATION_EMAIL_SENT)->getValue() !== '1'
+            && $customer->getCustomAttribute(Active::CUSTOMER_ACTIVATION_EMAIL_SENT)->getValue() !== '1'
             && $this->activeAttribute->isCustomerActive($customer)
         ) {
             $this->manageUserActivationEmail($customer);
@@ -129,7 +129,7 @@ class UserEdition implements ObserverInterface
     {
         try {
             $updatedCustomer = $this->customerRepository->getById($customer->getId());
-            $updatedCustomer->setCustomAttribute(InstallData::CUSTOMER_ACTIVATION_EMAIL_SENT, true);
+            $updatedCustomer->setCustomAttribute(Active::CUSTOMER_ACTIVATION_EMAIL_SENT, true);
             $this->customerRepository->save($updatedCustomer);
         } catch (Exception $ex) {
             $e = new CouldNotSaveException(__($ex->getMessage()), $ex);

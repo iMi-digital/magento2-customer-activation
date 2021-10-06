@@ -6,17 +6,21 @@
 namespace IMI\Magento2CustomerActivation\Model\Attribute;
 
 use IMI\Magento2CustomerActivation\Setup\InstallData;
+use Magento\Customer\Api\Data\CustomerInterface;
 
 class Active
 {
+    const CUSTOMER_ACCOUNT_ACTIVE = 'account_is_active';
+    const CUSTOMER_ACTIVATION_EMAIL_SENT = 'account_activation_email_sent';
+
     /**
-     * @param \Magento\Customer\Api\Data\CustomerInterface $customer
+     * @param CustomerInterface $customer
      *
      * @return bool
      */
     public function isCustomerActive($customer)
     {
-        $attribute = $customer->getCustomAttribute(InstallData::CUSTOMER_ACCOUNT_ACTIVE);
+        $attribute = $customer->getCustomAttribute(self::CUSTOMER_ACCOUNT_ACTIVE);
         if ($attribute !== null) { // After the installation of the module
             return boolval($attribute->getValue());
         }

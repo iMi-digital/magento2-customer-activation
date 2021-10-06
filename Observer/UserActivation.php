@@ -7,6 +7,7 @@
 namespace IMI\Magento2CustomerActivation\Observer;
 
 use IMI\Magento2CustomerActivation\Helper\Data;
+use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Exception\InputException;
@@ -88,7 +89,7 @@ class UserActivation implements ObserverInterface
         $customer = $observer->getEvent()->getCustomer();
         if ($this->helper->isEnabled()) {
             $newCustomer = $this->customerRepository->get($customer->getEmail());
-            $newCustomer->setCustomAttribute(InstallData::CUSTOMER_ACCOUNT_ACTIVE, 0);
+            $newCustomer->setCustomAttribute(Active::CUSTOMER_ACCOUNT_ACTIVE, 0);
             $this->customerRepository->save($newCustomer);
             $this->messageManager->addNoticeMessage(__('Your account will be enabled by the site owner soon'));
             $this->customerSession->setRegisterSuccess(true);

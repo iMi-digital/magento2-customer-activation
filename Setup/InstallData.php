@@ -7,11 +7,13 @@
 
 namespace IMI\Magento2CustomerActivation\Setup;
 
+use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Customer\Model\Customer;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Eav\Model\Entity\Attribute\Set as AttributeSet;
 use Magento\Eav\Model\Entity\Attribute\SetFactory as AttributeSetFactory;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Customer\Model\Attribute\Backend\Data\Boolean;
@@ -21,10 +23,6 @@ use Magento\Customer\Model\Attribute\Backend\Data\Boolean;
  */
 class InstallData implements InstallDataInterface
 {
-    const CUSTOMER_ACCOUNT_ACTIVE = 'account_is_active';
-
-    const CUSTOMER_ACTIVATION_EMAIL_SENT = 'account_activation_email_sent';
-
     /**
      * Customer setup factory
      *
@@ -39,8 +37,8 @@ class InstallData implements InstallDataInterface
 
     /**
      * InstallData constructor.
-     * @param \Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory
-     * @param \Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory
+     * @param CustomerSetupFactory $customerSetupFactory
+     * @param AttributeSetFactory $attributeSetFactory
      */
     public function __construct(
         CustomerSetupFactory $customerSetupFactory,
@@ -52,8 +50,8 @@ class InstallData implements InstallDataInterface
 
 
     /**
-     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup
-     * @param \Magento\Framework\Setup\ModuleContextInterface $context
+     * @param ModuleDataSetupInterface $setup
+     * @param ModuleContextInterface $context
      */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -65,7 +63,7 @@ class InstallData implements InstallDataInterface
 
         // Adding the 'is active' attribute
         $attributesInfo = [
-            self::CUSTOMER_ACCOUNT_ACTIVE =>
+            Active::CUSTOMER_ACCOUNT_ACTIVE =>
                 [
                     'type' => 'int',
                     'label' => 'Account is Active',
@@ -92,7 +90,7 @@ class InstallData implements InstallDataInterface
             $customerSetup->addAttribute(Customer::ENTITY, $attributeCode, $attributeParams);
         }
 
-        $newAttribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, self::CUSTOMER_ACCOUNT_ACTIVE);
+        $newAttribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, Active::CUSTOMER_ACCOUNT_ACTIVE);
         $newAttribute->addData([
             'attribute_set_id' => $attributeSetId,
             'attribute_group_id' => $attributeGroupId,
@@ -103,7 +101,7 @@ class InstallData implements InstallDataInterface
 
         // Adding the 'activation email send' attribute
         $attributesInfo = [
-            self::CUSTOMER_ACTIVATION_EMAIL_SENT =>
+            Active::CUSTOMER_ACTIVATION_EMAIL_SENT =>
                 [
                     'type' => 'int',
                     'label' => 'Activation email sent',
