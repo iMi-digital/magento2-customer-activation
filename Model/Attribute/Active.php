@@ -5,7 +5,7 @@
  */
 namespace Enrico69\Magento2CustomerActivation\Model\Attribute;
 
-use Enrico69\Magento2CustomerActivation\Setup\InstallData;;
+use Enrico69\Magento2CustomerActivation\Setup\InstallData;
 
 class Active
 {
@@ -18,12 +18,11 @@ class Active
     {
         $attribute = $customer->getCustomAttribute(InstallData::CUSTOMER_ACCOUNT_ACTIVE);
         if ($attribute !== null) { // After the installation of the module
-            $status = $attribute->getValue() === '1' ? true:false;
-        } else { // Before the installation of the module
-            $status = true;
+            return boolval($attribute->getValue());
         }
 
-        return $status;
+        // Before the installation of the module
+        return true;
     }
 }
 
