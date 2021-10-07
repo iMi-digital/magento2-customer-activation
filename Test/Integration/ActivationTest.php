@@ -7,6 +7,7 @@ use Laminas\Mail\Header\HeaderWrap;
 use Laminas\Mime\Part;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Session;
+use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Mail\Message;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -35,10 +36,10 @@ class ActivationTest extends AbstractController
     private function registerCustomer()
     {
         $postData = [
-            'prefix' => 'Herr',
+            'prefix' => 'Mr.',
             'firstname' => 'John',
             'lastname' => 'Doe',
-            'email' => 'johndoe@example.com',
+            'email' => 'some_new_dev.user@example.com',
             'comment' => 'Dummy Comment',
             'password' => 'Dev123456',
             'password_confirmation' => 'Dev123456',
@@ -47,6 +48,11 @@ class ActivationTest extends AbstractController
         $this->getRequest()->setPostValue($postData);
 
         $this->dispatch('customer/account/createpost');
+
+        print_r($this->getResponse()->getStatusCode());
+        print_r($this->getRequest()->getHeaders());
+        print_r($this->getRequest()->getContent());
+        print_r($this->getMessages());
     }
 
     /**
@@ -126,6 +132,7 @@ class ActivationTest extends AbstractController
     /**
      * @magentoConfigFixture current_store customer/create_account/customer_account_activation 1
      * @magentoDataFixture Magento/Customer/_files/customer_confirmation_email_address_with_special_chars.php
+     * @magentoDbIsolation enabled
      */
     public function testShouldNotAllowLoginAfterEmailConfirmation()
     {
@@ -187,6 +194,7 @@ class ActivationTest extends AbstractController
      * Copied from \Magento\Customer\Controller\AccountTest::getConfirmationUrlFromMessageContent
      *
      * @param string $content
+     *
      * @return string
      */
     private function getConfirmationUrlFromMessageContent(string $content): string
