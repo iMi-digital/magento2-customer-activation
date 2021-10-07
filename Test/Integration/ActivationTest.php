@@ -37,9 +37,12 @@ class ActivationTest extends AbstractController
     private function dumpResponse()
     {
         print_r("Status Code: {$this->getResponse()->getStatusCode()}\n");
-        print_r("Headers:\n" . $this->getRequest()->getHeaders() . "\n");
-        print_r("Content:\n" . $this->getRequest()->getContent() . "\n");
-        print_r("Messages:\n" . $this->getMessages());
+        echo "Headers:\n";
+        print_r($this->getRequest()->getHeaders());
+        echo "Content:\n";
+        print_r($this->getRequest()->getContent());
+        echo "Messages:\n";
+        print_r($this->getMessages());
     }
 
     private function registerCustomer()
