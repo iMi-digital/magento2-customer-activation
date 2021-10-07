@@ -122,4 +122,84 @@ class ActivationTest extends AbstractController
         $this->assertTrue($session->isLoggedIn());
         $this->assertEmpty($this->getMessages());
     }
+
+    /**
+     * @magentoConfigFixture current_store customer/create_account/customer_account_activation 1
+     * @magentoDataFixture Magento/Customer/_files/customer_confirmation_email_address_with_special_chars.php
+     */
+    public function testShouldNotAllowLoginAfterEmailConfirmation()
+    {
+        // First part is copied from \Magento\Customer\Controller\AccountTest::testConfirmationEmailWithSpecialCharacters
+        $email = 'customer+confirmation@example.com';
+        $this->dispatch('customer/account/confirmation/email/customer%2Bconfirmation%40email.com');
+        $this->getRequest()->setMethod(Request::METHOD_POST);
+        $this->getRequest()->setPostValue('email', $email);
+        $this->dispatch('customer/account/confirmation/email/customer%2Bconfirmation%40email.com');
+
+        $this->assertSessionMessages(
+            $this->equalTo([__('Please check your email for confirmation key.')]),
+            MessageInterface::TYPE_SUCCESS
+        );
+
+        /** @var $message Message */
+        $message = $this->transportBuilderMock->getSentMessage();
+        $rawMessage = $message->getRawMessage();
+
+        /** @var Part $messageBodyPart */
+        $messageBodyParts = $message->getBody()->getParts();
+        $messageBodyPart = reset($messageBodyParts);
+        $messageEncoding = $messageBodyPart->getCharset();
+        $name = 'John Smith';
+
+        if (strtoupper($messageEncoding) !== 'ASCII') {
+            $name = HeaderWrap::mimeEncodeValue($name, $messageEncoding);
+        }
+
+        $nameEmail = sprintf('%s <%s>', $name, $email);
+
+        $this->assertStringContainsString('To: ' . $nameEmail, $rawMessage);
+
+        $content = $messageBodyPart->getRawContent();
+        $confirmationUrl = $this->getConfirmationUrlFromMessageContent($content);
+        $this->getRequest()->setMethod(Request::METHOD_GET);
+        $this->getRequest()
+            ->setRequestUri($confirmationUrl)
+            ->setPathInfo()
+            ->setActionName('confirm');
+        $cookieManager = $this->_objectManager->get(CookieManagerInterface::class);
+        $jsonSerializer = $this->_objectManager->get(Json::class);
+        $cookieManager->setPublicCookie(
+            MessagePlugin::MESSAGES_COOKIES_NAME,
+            $jsonSerializer->serialize([])
+        );
+        $this->dispatch($confirmationUrl);
+
+        $this->assertRedirect($this->stringContains('customer/account/login'));
+        $this->assertSessionMessages(
+            $this->equalTo([__('We will enable your account soon.')]),
+            MessageInterface::TYPE_NOTICE
+        );
+    }
+
+    /**
+     * Get confirmation URL from message content.
+     *
+     * Copied from \Magento\Customer\Controller\AccountTest::getConfirmationUrlFromMessageContent
+     *
+     * @param string $content
+     * @return string
+     */
+    private function getConfirmationUrlFromMessageContent(string $content): string
+    {
+        $confirmationUrl = '';
+
+        if (preg_match('<a\s*href="(?<url>.*?)".*>', $content, $matches)) {
+            $confirmationUrl = $matches['url'];
+            $confirmationUrl = str_replace('http://localhost/index.php/', '', $confirmationUrl);
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            $confirmationUrl = html_entity_decode($confirmationUrl);
+        }
+
+        return $confirmationUrl;
+    }
 }
