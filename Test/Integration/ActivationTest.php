@@ -147,8 +147,6 @@ class ActivationTest extends AbstractController
         /** @var CustomerRegistry $customerRegistry */
         $customerRegistry = $this->_objectManager->get(CustomerRegistry::class);
         $customerData = $customerRegistry->retrieveByEmail($email);
-        $token = $customerData->getRpToken();
-        $this->assertForgotPasswordEmailContent($token);
 
         // Set account not active
         /** @var CustomerRepositoryInterface $customerRepository */
