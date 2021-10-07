@@ -6,6 +6,7 @@ use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 use Laminas\Mail\Header\HeaderWrap;
 use Laminas\Mime\Part;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Mail\Message;
@@ -35,10 +36,10 @@ class ActivationTest extends AbstractController
 
     private function dumpResponse()
     {
-        print_r($this->getResponse()->getStatusCode());
-        print_r($this->getRequest()->getHeaders());
-        print_r($this->getRequest()->getContent());
-        print_r($this->getMessages());
+        print_r("Status Code: {$this->getResponse()->getStatusCode()}\n");
+        print_r("Headers:\n" . $this->getRequest()->getHeaders() . "\n");
+        print_r("Content:\n" . $this->getRequest()->getContent() . "\n");
+        print_r("Messages:\n" . $this->getMessages());
     }
 
     private function registerCustomer()
@@ -141,13 +142,30 @@ class ActivationTest extends AbstractController
      */
     public function testShouldNotAllowLoginAfterEmailConfirmation()
     {
-        // First part is copied from \Magento\Customer\Controller\AccountTest::testConfirmationEmailWithSpecialCharacters
         $email = 'customer+confirmation@example.com';
+
+        /** @var CustomerRegistry $customerRegistry */
+        $customerRegistry = $this->_objectManager->get(CustomerRegistry::class);
+        $customerData = $customerRegistry->retrieveByEmail($email);
+        $token = $customerData->getRpToken();
+        $this->assertForgotPasswordEmailContent($token);
+
+        // Set account not active
+        /** @var CustomerRepositoryInterface $customerRepository */
+        $customerRepository = $this->_objectManager->create(CustomerRepositoryInterface::class);
+        /** @var \Magento\Customer\Api\Data\CustomerInterface $customer */
+        $customer = $customerRepository->getById($customerData->getId());
+        $customer->setCustomAttribute(Active::CUSTOMER_ACCOUNT_ACTIVE, 0);
+        $customerRepository->save($customer);
+
+        // First part is copied from \Magento\Customer\Controller\AccountTest::testConfirmationEmailWithSpecialCharacters
+        // COPY START
         $this->dispatch('customer/account/confirmation/email/customer%2Bconfirmation%40email.com');
         $this->getRequest()->setMethod(Request::METHOD_POST);
         $this->getRequest()->setPostValue('email', $email);
         $this->dispatch('customer/account/confirmation/email/customer%2Bconfirmation%40email.com');
 
+        $this->assertRedirect($this->stringContains('customer/account/index'));
         $this->assertSessionMessages(
             $this->equalTo([__('Please check your email for confirmation key.')]),
             MessageInterface::TYPE_SUCCESS
@@ -185,6 +203,8 @@ class ActivationTest extends AbstractController
             $jsonSerializer->serialize([])
         );
         $this->dispatch($confirmationUrl);
+
+        // COPY END
 
         $this->dumpResponse();
 
