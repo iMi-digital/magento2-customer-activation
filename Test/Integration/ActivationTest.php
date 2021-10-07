@@ -33,6 +33,14 @@ class ActivationTest extends AbstractController
         $this->transportBuilderMock = $this->_objectManager->get(TransportBuilderMock::class);
     }
 
+    private function dumpResponse()
+    {
+        print_r($this->getResponse()->getStatusCode());
+        print_r($this->getRequest()->getHeaders());
+        print_r($this->getRequest()->getContent());
+        print_r($this->getMessages());
+    }
+
     private function registerCustomer()
     {
         $postData = [
@@ -48,25 +56,22 @@ class ActivationTest extends AbstractController
         $this->getRequest()->setPostValue($postData);
 
         $this->dispatch('customer/account/createpost');
-
-        print_r($this->getResponse()->getStatusCode());
-        print_r($this->getRequest()->getHeaders());
-        print_r($this->getRequest()->getContent());
-        print_r($this->getMessages());
     }
 
     /**
      * @magentoConfigFixture current_store customer/create_account/customer_account_activation 0
+     * @magentoDbIsolation enabled
      */
     public function testShouldNotDoAnythingWhenDisabled()
     {
         $this->registerCustomer();
 
-        $this->assertRedirect($this->stringContains('customer/account/index'));
+        $this->assertRedirect($this->stringContains('customer/account/'));
     }
 
     /**
      * @magentoConfigFixture current_store customer/create_account/customer_account_activation 1
+     * @magentoDbIsolation enabled
      */
     public function testShouldNotActivateCustomerAfterRegistration()
     {
@@ -180,6 +185,8 @@ class ActivationTest extends AbstractController
             $jsonSerializer->serialize([])
         );
         $this->dispatch($confirmationUrl);
+
+        $this->dumpResponse();
 
         $this->assertRedirect($this->stringContains('customer/account/login'));
         $this->assertSessionMessages(
