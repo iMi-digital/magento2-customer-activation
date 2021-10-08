@@ -161,7 +161,6 @@ class ActivationTest extends AbstractController
         $customer = $customerRepository->getById($customerData->getId());
         $customer->setCustomAttribute(Active::CUSTOMER_ACCOUNT_ACTIVE, 0);
         $customerRepository->save($customer);
-        $customerRegistry->push($customer);
 
         // First part is copied from \Magento\Customer\Controller\AccountTest::testConfirmationEmailWithSpecialCharacters
         // COPY START
@@ -207,12 +206,20 @@ class ActivationTest extends AbstractController
             MessagePlugin::MESSAGES_COOKIES_NAME,
             $jsonSerializer->serialize([])
         );
+
+
+        $customer = $customerRepository->getById($customerData->getId());
+        $customer->setCustomAttribute(Active::CUSTOMER_ACCOUNT_ACTIVE, 0);
+        $customerRepository->save($customer);
+
+
         $this->dispatch($confirmationUrl);
 
         // COPY END
 
         $this->dumpResponse();
 
+        $customerData = $customerRegistry->retrieveByEmail($email);
         $customer = $customerRepository->getById($customerData->getId());
         echo 'Customer Active:';
         var_dump($customer->getCustomAttribute(Active::CUSTOMER_ACCOUNT_ACTIVE));
