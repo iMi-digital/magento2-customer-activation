@@ -17,7 +17,7 @@ class Active
      *
      * @return bool
      */
-    public function isCustomerActive($customer)
+    public function isCustomerActive($customer): bool
     {
         $attribute = $customer->getCustomAttribute(self::CUSTOMER_ACCOUNT_ACTIVE);
         if ($attribute !== null) { // After the installation of the module
