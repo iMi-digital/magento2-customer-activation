@@ -34,3 +34,4 @@ jobs:
           module_name: IMI_Magento2CustomerActivation
           composer_name: imi/magento2-customer-activation
           ce_version: '2.4.2'
+          composer_version: '2'
