@@ -6,6 +6,7 @@ use IMI\Magento2CustomerActivation\Model\Attribute\Active;
 use Laminas\Mail\Header\HeaderWrap;
 use Laminas\Mime\Part;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Data\Form\FormKey;
@@ -156,10 +157,11 @@ class ActivationTest extends AbstractController
         // Set account not active
         /** @var CustomerRepositoryInterface $customerRepository */
         $customerRepository = $this->_objectManager->create(CustomerRepositoryInterface::class);
-        /** @var \Magento\Customer\Api\Data\CustomerInterface $customer */
+        /** @var CustomerInterface $customer */
         $customer = $customerRepository->getById($customerData->getId());
         $customer->setCustomAttribute(Active::CUSTOMER_ACCOUNT_ACTIVE, 0);
         $customerRepository->save($customer);
+        $customerRegistry->push($customer);
 
         // First part is copied from \Magento\Customer\Controller\AccountTest::testConfirmationEmailWithSpecialCharacters
         // COPY START
