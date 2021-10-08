@@ -199,12 +199,12 @@ class ActivationTest extends AbstractController
             ->setRequestUri($confirmationUrl)
             ->setPathInfo()
             ->setActionName('confirm');
-//        $cookieManager = $this->_objectManager->get(CookieManagerInterface::class);
-//        $jsonSerializer = $this->_objectManager->get(Json::class);
-//        $cookieManager->setPublicCookie(
-//            MessagePlugin::MESSAGES_COOKIES_NAME,
-//            $jsonSerializer->serialize([])
-//        );
+        $cookieManager = $this->_objectManager->get(CookieManagerInterface::class);
+        $jsonSerializer = $this->_objectManager->get(Json::class);
+        $cookieManager->setPublicCookie(
+            MessagePlugin::MESSAGES_COOKIES_NAME,
+            $jsonSerializer->serialize([])
+        );
         $this->dispatch($confirmationUrl);
 
         // COPY END
