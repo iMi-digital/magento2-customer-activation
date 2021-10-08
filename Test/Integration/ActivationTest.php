@@ -211,6 +211,14 @@ class ActivationTest extends AbstractController
 
         $this->dumpResponse();
 
+        $customer = $customerRepository->getById($customerData->getId());
+        echo 'Customer Active:';
+        var_dump($customer->getCustomAttribute(Active::CUSTOMER_ACCOUNT_ACTIVE));
+        echo "\nEmail sent:";
+        var_dump($customer->getCustomAttribute(Active::CUSTOMER_ACTIVATION_EMAIL_SENT));
+        echo "\nCustomer Data:\n";
+        print_r($customerData->toArray());
+
         $this->assertRedirect($this->stringContains('customer/account/login'));
         $this->assertSessionMessages(
             $this->equalTo([(string)__('We will enable your account soon.')]),
