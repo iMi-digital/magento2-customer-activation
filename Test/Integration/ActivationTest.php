@@ -82,8 +82,10 @@ class ActivationTest extends AbstractController
         $this->registerCustomer();
 
         $this->assertRedirect($this->stringContains('customer/account/login'));
-        $this->assertSessionMessages($this->equalTo([(string)__('We will enable your account soon.')]),
-            MessageInterface::TYPE_NOTICE);
+        $this->assertSessionMessages(
+            $this->equalTo([(string)__('We will enable your account soon.')]),
+            MessageInterface::TYPE_NOTICE
+        );
     }
 
     private function loginCustomer(bool $active)
@@ -197,12 +199,12 @@ class ActivationTest extends AbstractController
             ->setRequestUri($confirmationUrl)
             ->setPathInfo()
             ->setActionName('confirm');
-        $cookieManager = $this->_objectManager->get(CookieManagerInterface::class);
-        $jsonSerializer = $this->_objectManager->get(Json::class);
-        $cookieManager->setPublicCookie(
-            MessagePlugin::MESSAGES_COOKIES_NAME,
-            $jsonSerializer->serialize([])
-        );
+//        $cookieManager = $this->_objectManager->get(CookieManagerInterface::class);
+//        $jsonSerializer = $this->_objectManager->get(Json::class);
+//        $cookieManager->setPublicCookie(
+//            MessagePlugin::MESSAGES_COOKIES_NAME,
+//            $jsonSerializer->serialize([])
+//        );
         $this->dispatch($confirmationUrl);
 
         // COPY END
@@ -211,7 +213,7 @@ class ActivationTest extends AbstractController
 
         $this->assertRedirect($this->stringContains('customer/account/login'));
         $this->assertSessionMessages(
-            $this->equalTo([__('We will enable your account soon.')]),
+            $this->equalTo([(string)__('We will enable your account soon.')]),
             MessageInterface::TYPE_NOTICE
         );
     }
