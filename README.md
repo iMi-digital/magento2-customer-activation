@@ -1,5 +1,7 @@
 # Magento 2 Customer Account Validation
 
+![Integration Tests](https://github.com/iMi-digital/magento2-customer-activation/actions/workflows/integration.yml/badge.svg)
+
 This module is designed to add the possibility for the site owner to manually validate customer accounts at registration.
 This is useful in cases of B2B or private shops.
 
