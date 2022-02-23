@@ -56,7 +56,17 @@ class AdminNotification
             $customer->getStoreId()
         );
 
-        $this->transportBuilder->setTemplateIdentifier('imi_activation_email_notification')
+        $emailTemplate = $this->scopeConfig->getValue(
+            'customer/create_account/imi_activation_email_notification_template',
+            ScopeInterface::SCOPE_STORE,
+            $customer->getStoreId()
+        );
+
+        if (!$emailTemplate) {
+            $emailTemplate = 'imi_activation_email_notification';
+        }
+
+        $this->transportBuilder->setTemplateIdentifier($emailTemplate)
             ->setTemplateOptions(
                 [
                     'area' => Area::AREA_FRONTEND,
