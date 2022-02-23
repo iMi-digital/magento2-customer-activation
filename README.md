@@ -36,7 +36,21 @@ bin/magento cache:clean
 
 In the admin panel, got to `Stores > Configuration > Customers > Customer Configuration`.
 Open the `Create New Account Options` panel and set _Customer account need to be activated by an admin user_ to true 
-for the stores where you want to enable the module.
+for the stores where you want to enable the module. You may set your own email templates.
+
+## Email Templates
+### Account Activated Confirmation Notification
+Sent to the customer upon activation. The following variables are provided:
+* email: Customer email address
+* prefix: Customer prefix
+* firstname: Customer firstname
+* lastname: Customer lastname
+
+### Admin Notification
+Send to the "Sales Representative" after registration/email confirmation. The following variables are provided:
+* customer: The customer object
+* customer_admin_url: Link to the customer in adminhtml
+* formattedShippingAddress: The address set upon registration (if available/configured)
 
 ## How does it work?
 
