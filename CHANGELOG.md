@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2022-02-24
+
+### Documentation
+- Update readme
+
+### Features
+- Removed variable `email` from admin notification email
+- New variables `customer` and `formattedShippingAddress` in admin notification email
+- Add configuration option to set custom admin notification template
+
+### Upgrading to 2.0.0
+- If you have overwritten the email template `new-customer-notification.html` you have to change the variable `email` to 
+`customer.email`
+
 ## [1.5.0] - 2021-10-08
 
 ### Bug Fixes
