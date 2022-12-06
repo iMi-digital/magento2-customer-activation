@@ -28,4 +28,3 @@ class Active
         return true;
     }
 }
-

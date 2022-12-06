@@ -48,7 +48,6 @@ class InstallData implements InstallDataInterface
         $this->attributeSetFactory = $attributeSetFactory;
     }
 
-
     /**
      * @param ModuleDataSetupInterface $setup
      * @param ModuleContextInterface $context
