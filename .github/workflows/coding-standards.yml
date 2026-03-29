@@ -1,0 +1,16 @@
+name: M2 Coding Standard
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  static:
+    name: M2 Coding Standard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: iMi-digital/github-actions-m2/magento-coding-standard@imi-fixes
+        with:
+          phpcs_standard:

@@ -17,6 +17,9 @@ class Data
 
     public function isEnabled($storeId = null): bool
     {
-        return (bool)$this->scopeConfig->getValue('customer/create_account/customer_account_activation', ScopeInterface::SCOPE_STORE, $storeId);
+        return (bool)$this->scopeConfig->getValue(
+            'customer/create_account/customer_account_activation',
+            ScopeInterface::SCOPE_STORE, $storeId
+        );
     }
 }

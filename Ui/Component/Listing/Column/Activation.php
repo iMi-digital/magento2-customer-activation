@@ -37,5 +37,4 @@ class Activation extends Column
 
         return $dataSource;
     }
-
 }
